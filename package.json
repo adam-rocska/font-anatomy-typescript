@@ -1,10 +1,35 @@
 {
   "name": "@adam-rocska/font-anatomy",
   "version": "1.0.0",
-  "description": "",
-  "keywords": [ ],
-  "author": "",
+  "description": "A collection of tools for working with font anatomy in Typescript.",
+  "keywords": [
+    "font",
+    "anatomy",
+    "opentype",
+    "typography",
+    "typeface",
+    "fontface",
+    "font-family",
+    "typescript",
+    "ts",
+    "types",
+    "js",
+    "javascript",
+    "node",
+    "nodejs"
+  ],
+  "author": {
+    "name": "Ádám László Rocska",
+    "url": "https://adam-rocska.github.io"
+  },
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adam-rocska/font-anatomy-typescript.git"
+  },
+  "bugs": {
+    "url": "https://github.com/adam-rocska/font-anatomy-typescript/issues"
+  },
   "scripts": {
     "clean": "rimraf dist",
     "build": "bunchee && chmod +x dist/bin/font-anatomy.js",
