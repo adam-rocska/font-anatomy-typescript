@@ -5,6 +5,15 @@ Enjoy.
 
 ## Features
 
+### Get the anatomy of a font file
+
+```ts
+import { fromFontFile } from '@adam-rocska/font-anatomy';
+
+// It takes a `PathLike` so you can pass a string, URL or a `Buffer`
+const fontAnatomy = fromFontFile('path/to/font.ttf');
+```
+
 ### relativize
 
 Utility for when you need a font anatomy object who's values
