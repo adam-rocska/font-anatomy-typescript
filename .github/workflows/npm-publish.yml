@@ -20,6 +20,7 @@ jobs:
       - run: pnpm install
       - run: pnpm clean
       - run: pnpm build
+      - run: pnpm link .
       - run: pnpm test
       - run: pnpm check
       - run: pnpm publish --no-git-checks --access public
