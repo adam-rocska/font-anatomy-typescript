@@ -1,4 +1,6 @@
-export type FontAnatomy<Value extends Number> = {
+import {ExpressibleAsNumber} from "./expressible-as-number";
+
+export type FontAnatomy<Value extends ExpressibleAsNumber> = {
   unitsPerEm: Value,
   ascender: Value,
   descender: Value,
@@ -29,7 +31,7 @@ export const isFontAnatomy: FontAnatomyTypePredicate = (
 
 export type FontAnatomyTypePredicate = {
   (candidate: any): candidate is FontAnatomy<number>;
-  <Value extends Number>(
+  <Value extends ExpressibleAsNumber>(
     candidate: any,
     isValue: (valueCandidate: any) => valueCandidate is Value
   ): candidate is FontAnatomy<Value>;
