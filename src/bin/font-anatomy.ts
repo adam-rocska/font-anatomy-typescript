@@ -28,7 +28,7 @@ yargs(hideBin(process.argv))
     if (argv.outputFormat === 'json') return process.stdout.write(JSON.stringify(anatomy));
     if (argv.headingLevel < 1 || argv.headingLevel > 5) throw new Error('Invalid heading level.');
 
-    const relativized = relativize(anatomy, "unitsPerEm");
+    const relativized = relativize("unitsPerEm", anatomy);
 
     process.stdout.write([
       head(argv.headingLevel, resolveLocalizedName(font.names.fullName)),

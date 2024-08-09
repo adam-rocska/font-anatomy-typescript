@@ -4,17 +4,17 @@ import {FontAnatomy} from "./font-anatomy";
 export function relativize<
   Value extends ExpressibleAsNumber = number
 >(
-  anatomy: FontAnatomy<Value>,
   basedOn: keyof typeof anatomy,
+  anatomy: FontAnatomy<Value>,
   numberToValue: (n: number) => Value
 ): FontAnatomy<Value>;
 export function relativize(
-  anatomy: FontAnatomy<number>,
-  basedOn: keyof typeof anatomy
+  basedOn: keyof typeof anatomy,
+  anatomy: FontAnatomy<number>
 ): FontAnatomy<number>;
 export function relativize(
-  anatomy: FontAnatomy<any>,
   basedOn: keyof typeof anatomy,
+  anatomy: FontAnatomy<any>,
   numberToValue: (n: any) => any = n => n
 ): FontAnatomy<any> {
   return ({
