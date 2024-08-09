@@ -9,16 +9,8 @@ import {markdownTable} from "@adam-rocska/markdown-table";
 yargs(hideBin(process.argv))
   .version(packageJson.version)
   .showHelpOnFail(true)
-  .option(`outputFormat`, {
-    alias: `o`,
-    choices: [`json`, `md`],
-    default: `json`
-  })
-  .option('headingLevel', {
-    alias: 'h',
-    type: 'number',
-    default: 1
-  })
+  .option(`outputFormat`, {alias: `o`, choices: [`json`, `md`], default: `json`})
+  .option('headingLevel', {alias: 'h', type: 'number', default: 1})
   .parseAsync()
   .then(async (argv) => {
     const input = await process
@@ -39,18 +31,12 @@ yargs(hideBin(process.argv))
     const relativized = relativize(anatomy, "unitsPerEm");
 
     process.stdout.write([
-      [
-        '#'.repeat(argv.headingLevel),
-        resolveLocalizedName(font.names.fullName)
-      ].join(' '),
+      head(argv.headingLevel, resolveLocalizedName(font.names.fullName)),
       '',
       'Extracted using `font-anatomy`, a CLI utility of',
       '[`@adam-rocska/font-anatomy`](https://github.com/adam-rocska/font-anatomy)',
       '',
-      [
-        '#'.repeat(argv.headingLevel + 1),
-        'Things to know'
-      ].join(' '),
+      head(argv.headingLevel + 1, 'Things to know'),
       '',
       markdownTable(
         ["Attribute", "Value"],
@@ -70,10 +56,7 @@ yargs(hideBin(process.argv))
         ["Version", resolveLocalizedName(font.names.version)],
       ),
       '',
-      [
-        '#'.repeat(argv.headingLevel + 1),
-        'Anatomy'
-      ].join(' '),
+      head(argv.headingLevel + 1, 'Anatomy'),
       '',
       markdownTable(
         [`Trait`, `Absolute Value`, `Relative Value`],
@@ -86,6 +69,8 @@ yargs(hideBin(process.argv))
       ''
     ].join('\n'));
   });
+
+function head(level: number, text: string): string {return `${'#'.repeat(level)} ${text}`;}
 
 function resolveLocalizedName(localizedName: LocalizedName): string {
   if (!localizedName) return '';
