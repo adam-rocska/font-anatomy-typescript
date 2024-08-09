@@ -1,62 +1,56 @@
 import yargs from 'yargs';
 import {hideBin} from 'yargs/helpers';
-import {cwd} from 'node:process';
-import openType, {LocalizedName} from 'opentype.js';
+import openType, {Font, LocalizedName} from 'opentype.js';
 import {fromFont} from '../from-font';
-import {FixedLengthArray} from "type-fest";
 import {relativize} from '../relativize';
 import packageJson from '../../package.json';
+import {markdownTable} from "@adam-rocska/markdown-table";
 
-enum ExitCode {
-  Success = 0,
-  LoadError = 1,
-  ExtractError = 2
-}
+yargs(hideBin(process.argv))
+  .version(packageJson.version)
+  .showHelpOnFail(true)
+  .option(`outputFormat`, {
+    alias: `o`,
+    choices: [`json`, `md`],
+    default: `json`
+  })
+  .option('headingLevel', {
+    alias: 'h',
+    type: 'number',
+    default: 1
+  })
+  .parseAsync()
+  .then(async (argv) => {
+    const input = await process
+      .stdin
+      .reduce(
+        (i, c) => Buffer.concat([i, c]),
+        Buffer.alloc(0)
+      );
 
-(async () => {
-  const argv = await yargs(hideBin(process.argv))
-    .version(packageJson.version)
-    .showHelpOnFail(true)
-    .option(`outputFormat`, {
-      alias: `o`,
-      describe: `The format of the output.`,
-      type: `string`,
-      choices: [`json`, `md`],
-      default: `json`
-    })
-    .parseAsync();
+    if (!input.length) throw new Error('No input received.');
+    const font = openType.parse(input.buffer);
+    const anatomy = fromFont(font);
+    if (!anatomy) throw new Error('Could not extract anatomy.');
 
-  const input: Buffer = await process.stdin.reduce((a, b) => a + b);
+    if (argv.outputFormat === 'json') return process.stdout.write(JSON.stringify(anatomy));
+    if (argv.headingLevel < 1 || argv.headingLevel > 5) throw new Error('Invalid heading level.');
 
-  const path = optionalTry(() => new URL(input.toString()))
-    ?? optionalTry(() => new URL(input.toString(), cwd()))
-    ?? optionalTry(() => new URL(input.toString(), '/'));
-  const font = path
-    ? await optionalTry(() => openType.load(path.toString()))
-    : optionalTry(() => openType.parse(input
-      .buffer
-      .slice(input.byteOffset, input.byteOffset + input.byteLength))
-    );
-
-  if (!font) {
-    process.stderr.write(`Could not load font.\n`);
-    process.exit(ExitCode.LoadError);
-  }
-
-  const anatomy = fromFont(font);
-  if (!anatomy) {
-    process.stderr.write(`Could not extract anatomy.\n`);
-    process.exit(ExitCode.ExtractError);
-  }
-
-  if (argv.outputFormat === 'json') {
-    process.stdout.write(JSON.stringify(anatomy));
-  } else if (argv.outputFormat === 'md') {
     const relativized = relativize(anatomy, "unitsPerEm");
+
     process.stdout.write([
-      `# ${resolveLocalizedName(font.names.fullName)}`,
+      [
+        '#'.repeat(argv.headingLevel),
+        resolveLocalizedName(font.names.fullName)
+      ].join(' '),
       '',
-      '## Things to know',
+      'Extracted using `font-anatomy`, a CLI utility of',
+      '[`@adam-rocska/font-anatomy`](https://github.com/adam-rocska/font-anatomy)',
+      '',
+      [
+        '#'.repeat(argv.headingLevel + 1),
+        'Things to know'
+      ].join(' '),
       '',
       markdownTable(
         ["Attribute", "Value"],
@@ -76,7 +70,10 @@ enum ExitCode {
         ["Version", resolveLocalizedName(font.names.version)],
       ),
       '',
-      '## Anatomy',
+      [
+        '#'.repeat(argv.headingLevel + 1),
+        'Anatomy'
+      ].join(' '),
       '',
       markdownTable(
         [`Trait`, `Absolute Value`, `Relative Value`],
@@ -85,53 +82,14 @@ enum ExitCode {
         [`Descender`, `${anatomy.descender}`, `${relativized.descender}`],
         [`X-Height`, `${anatomy.xHeight}`, `${relativized.xHeight}`],
         [`Cap Height`, `${anatomy.capHeight}`, `${relativized.capHeight}`]
-      )
+      ),
+      ''
     ].join('\n'));
-  }
-})();
-
-function optionalTry<T>(f: () => T): T | void {
-  const logFailure = (e: unknown) => {
-    if (process.env.NODE_ENV !== 'development') return;
-    process.stderr.write(`Error: ${e}\n`);
-  };
-  try {
-    const result = f();
-    if (result instanceof Promise) result.catch(logFailure);
-    return result;
-  }
-  catch (error) {logFailure(error);}
-}
-
-function markdownTable<
-  Headers extends FixedLengthArray<string, number>
->(
-  headers: Headers,
-  ...rows: FixedLengthArray<string, Headers["length"]>[]
-): string {
-  const longestLengthPerColumn = [headers, ...rows]
-    .reduce(
-      (t, r) => t.map((v, i) => Math.max(v, r[i].length)),
-      headers.map(() => 0)
-    );
-
-  const pad = (content: string, columnIndex: number): string => content
-    .trim()
-    .padEnd(longestLengthPerColumn[columnIndex]);
-
-  return [
-    headers.map(pad).join(' | '),
-    headers.map((_, i) => pad('', i).replace(/ /g, '-')).join(' | '),
-    ...rows.map(row => row.map(pad).join(' | '))
-  ]
-    .map(r => `| ${r} |`)
-    .join('\n')
-    .concat('\n\n');
-}
+  });
 
 function resolveLocalizedName(localizedName: LocalizedName): string {
   if (!localizedName) return '';
-  const key = Object.keys(localizedName).find(k => /^en(\W|$)}/.test(k));
+  const key = Object.keys(localizedName).find(k => /^en(\W|$)/.test(k));
   const value = key
     ? localizedName[key]
     : Object.values(localizedName)[0];
