@@ -1,5 +1,8 @@
 # Font Anatomy Tools for Typescript
 
+[![npm version](https://img.shields.io/npm/v/@adam-rocska/font-anatomy)](https://www.npmjs.com/package/@adam-rocska/font-anatomy)
+[![License](https://img.shields.io/npm/l/@adam-rocska/font-anatomy)](https://github.com/adam-rocska/font-anatomy-typescript/blob/main/LICENSE)
+
 This is a collection of tools for working with font anatomy
 in Typescript.
 
