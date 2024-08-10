@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
-import {execSync, spawnSync} from "child_process";
-import {copyFileSync, createReadStream, createWriteStream, existsSync, mkdirSync, readdirSync, readFileSync, statSync, unlinkSync, writeFile, writeFileSync} from "fs";
+import {spawnSync} from "child_process";
+import {copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, statSync, unlinkSync, writeFileSync} from "fs";
 import {extname, resolve, sep} from "path";
 import {fileURLToPath} from "url";
 
 const __dirname = fileURLToPath(import.meta.url);
-const extensions = [".ttf", ".otf", ".woff", ".woff2"];
+const extensions = [".ttf", ".otf", ".woff"];
 const specimenDirectory = resolve(__dirname, "../../test/bin/font-anatomy/user/specimen/");
 
 const config = {
@@ -29,7 +29,7 @@ process
   .filter((f, i, a) => a.indexOf(f) === i)
   .forEach(source => {
     const sourceName = fileName(source);
-    const specimen = resolve(specimenDirectory, sourceName.withoutExtension);
+    const specimen = resolve(specimenDirectory, sourceName.withExtension);
     const font = resolve(specimen, sourceName.withExtension);
     const json = resolve(specimen, `${sourceName.withoutExtension}.json`);
     const md = resolve(specimen, `${sourceName.withoutExtension}.md`);
