@@ -1,8 +1,7 @@
 #!/usr/bin/env node
 
-import {exec, execSync, spawn} from "child_process";
-import {createReadStream, createWriteStream, existsSync} from "fs";
-import {copyFile, mkdir, readFile, writeFile, stat, readdir} from "fs/promises";
+import {execSync, spawnSync} from "child_process";
+import {copyFileSync, createReadStream, createWriteStream, existsSync, mkdirSync, readdirSync, readFileSync, statSync, unlinkSync, writeFile, writeFileSync} from "fs";
 import {extname, resolve, sep} from "path";
 import {fileURLToPath} from "url";
 
@@ -10,61 +9,94 @@ const __dirname = fileURLToPath(import.meta.url);
 const extensions = [".ttf", ".otf", ".woff", ".woff2"];
 const specimenDirectory = resolve(__dirname, "../../test/bin/font-anatomy/user/specimen/");
 
-await
-  process
-    .argv
-    .slice(2)
-    .map(s => resolve(s))
-    .reduce(resolveFontFiles, Promise.resolve([]))
-    .then(async files => Promise.all(
-      files
-        .filter((f, i, a) => a.indexOf(f) === i)
-        .map(async font => {
-          const fontFileName = font.split(sep).pop();
-          const specimenName = fontFileName.split(".").slice(0, -1).join(".");
-          const specimenPath = resolve(specimenDirectory, specimenName);
+const config = {
+  skipFailure: false,
+  skipOverwrite: false,
+};
 
-          if (!existsSync(specimenPath)) await mkdir(specimenPath, {recursive: true});
+process
+  .argv
+  .slice(2)
+  .map(arg => {
+    const set = flag => {config[flag] = true; return undefined;};
+    if (arg === "-sf") return set("skipFailure");
+    if (arg === "-so") return set("skipOverwrite");
+    return arg;
+  })
+  .filter(arg => arg !== undefined)
+  .map(s => resolve(s))
+  .reduce(resolveFontFiles, [])
+  .filter((f, i, a) => a.indexOf(f) === i)
+  .forEach(source => {
+    const sourceName = fileName(source);
+    const specimen = resolve(specimenDirectory, sourceName.withoutExtension);
+    const font = resolve(specimen, sourceName.withExtension);
+    const json = resolve(specimen, `${sourceName.withoutExtension}.json`);
+    const md = resolve(specimen, `${sourceName.withoutExtension}.md`);
 
-          /// NOTE: stdout Status markers are alchemical symbols, not astro bs.
-          process.stdout.write(`♋︎`); // 🜚 : Solution
-          await Promise.all([
-            copyFile(font, resolve(specimenPath, fontFileName))
-              .then(() => process.stdout.write('♒︎')), // ♒︎ : Multiplication
-            expectedOutputOf(font, 'json')
-              .then(() => process.stdout.write('♌︎')), // ♌︎ : Digestion
-            expectedOutputOf(font, 'md')
-              .then(() => process.stdout.write('♓︎')) // ♓︎ : Projection
-          ]);
-        })
-    ));
+    if (shouldSkipOverwrite(specimen, font, json, md)) return process.stdout.write('🟡');
 
-function expectedOutputOf(font, format) {
-  return new Promise((resolve, reject) => {
-    const fontFileName = font.split(sep).pop();
-    const specimenName = fontFileName.split(".").slice(0, -1).join(".");
-    const specimenPath = resolve(specimenDirectory, specimenName);
-    /** @type {SpawnOptions} */
-    const spawnParams = {stdio: ['pipe', 'inherit', 'inherit']};
-    const process = spawn('pnpm', ['font-anatomy', '-o', format], spawnParams);
-    process.pipe(createReadStream(fontCopyPath));
-    process.pipe(createWriteStream(resolve(specimenPath, `${specimenName}.${format}`)));
-    process.on('exit', resolve);
-    process.on('error', reject);
+    if (!existsSync(specimen)) mkdirSync(specimen, {recursive: true});
+    if (existsSync(font)) unlinkSync(font);
+    if (existsSync(json)) unlinkSync(json);
+    if (existsSync(md)) unlinkSync(md);
+
+    try {
+      copyFileSync(source, font);
+      createSpecimen(font, json, 'json');
+      createSpecimen(font, md, 'md');
+    } catch (error) {
+      if (config.skipFailure) return process.stdout.write('🔴');
+      throw error;
+    }
+
+    process.stdout.write('🟢');
   });
+
+function shouldSkipOverwrite(specimen, font, json, md,) {
+  if (!config.skipOverwrite) return false;
+  if (existsSync(specimen)) return true;
+  if (existsSync(font)) return true;
+  if (existsSync(json)) return true;
+  if (existsSync(md)) return true;
+  return false;
+}
+
+function fileName(path) {
+  const withExtension = path.split(sep).pop();
+  const withoutExtension = withExtension.split(".").slice(0, -1).join(".");
+  return {withExtension, withoutExtension};
 }
 
 /**
- * @param {Promise<Array<string>>} into
- * @param {string} from
- * @returns {Promise<Array<string>>}
+ * @param {string} input
+ * @param {string} output
+ * @param {"json"|"md"} format
  */
-async function resolveFontFiles(into, from) {
-  const fromStat = await stat(from);
-  if (fromStat.isDirectory()) return (await readdir(from))
+function createSpecimen(input, output, format) {
+  const process = spawnSync(
+    "pnpm",
+    ["font-anatomy", "-o", format],
+    {
+      encoding: "binary",
+      stdio: ['pipe', 'pipe', 'inherit'],
+      input: readFileSync(input, {encoding: "binary"}),
+    }
+  );
+  writeFileSync(output, Buffer.from(process.stdout, "binary"));
+}
+
+/**
+ * @param {Array<string>} into
+ * @param {string} from
+ * @returns {Array<string>}
+ */
+function resolveFontFiles(into, from) {
+  const s = statSync(from);
+  if (s.isDirectory()) return readdirSync(from)
     .map(file => resolve(from, file))
     .reduce(resolveFontFiles, into);
-  if (!fromStat.isFile()) return into;
+  if (!s.isFile()) return into;
   if (!extensions.includes(extname(from))) return into;
-  return into.then(files => [...files, from]);
+  return [...into, from];
 }
