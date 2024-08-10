@@ -24,8 +24,13 @@ All utilities do and will assume inputs from `stdin` and
 outputs to `stdout`. This is to allow for easy chaining
 of commands and general composition.
 
-Examples assume a global install, but of-course you can use
-`npx` or `pnpx` to run them without installing.
+Example with `pnpx`:
+
+```zsh
+cat Poppins-BoldItalic.ttf | pnpx @adam-rocska/font-anatomy -o md > Poppins-BoldItalic.md
+```
+
+Example with a global install:
 
 ```sh
 my-font.ttf | font-anatomy --output-format=md > font-anatomy.md
