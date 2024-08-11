@@ -6,7 +6,7 @@ import {extname, resolve, sep} from "path";
 import {fileURLToPath} from "url";
 
 const __dirname = fileURLToPath(import.meta.url);
-const extensions = [".ttf", ".otf", ".woff"];
+const extensions = [".ttf", ".otf", ".woff", ".woff2"];
 const specimenDirectory = resolve(__dirname, "../../test/bin/font-anatomy/user/specimen/");
 
 const config = {
@@ -34,33 +34,23 @@ process
     const json = resolve(specimen, `${sourceName.withoutExtension}.json`);
     const md = resolve(specimen, `${sourceName.withoutExtension}.md`);
 
-    if (shouldSkipOverwrite(specimen, font, json, md)) return process.stdout.write('🟡');
-
     if (!existsSync(specimen)) mkdirSync(specimen, {recursive: true});
-    if (existsSync(font)) unlinkSync(font);
-    if (existsSync(json)) unlinkSync(json);
-    if (existsSync(md)) unlinkSync(md);
+
+    if (existsSync(font) && !config.skipOverwrite) unlinkSync(font);
+    if (existsSync(json) && !config.skipOverwrite) unlinkSync(json);
+    if (existsSync(md) && !config.skipOverwrite) unlinkSync(md);
 
     try {
-      copyFileSync(source, font);
-      createSpecimen(font, json, 'json');
-      createSpecimen(font, md, 'md');
+      if (!existsSync(font) || !config.skipOverwrite) copyFileSync(source, font);
+      if (!existsSync(json) || !config.skipOverwrite) createSpecimen(font, json, 'json');
+      if (!existsSync(md) || !config.skipOverwrite) createSpecimen(font, md, 'md');
     } catch (error) {
-      if (config.skipFailure) return process.stdout.write('🔴');
+      if (config.skipFailure) return process.stdout.write('F');
       throw error;
     }
 
-    process.stdout.write('🟢');
+    process.stdout.write('.');
   });
-
-function shouldSkipOverwrite(specimen, font, json, md,) {
-  if (!config.skipOverwrite) return false;
-  if (existsSync(specimen)) return true;
-  if (existsSync(font)) return true;
-  if (existsSync(json)) return true;
-  if (existsSync(md)) return true;
-  return false;
-}
 
 function fileName(path) {
   const withExtension = path.split(sep).pop();
@@ -84,6 +74,7 @@ function createSpecimen(input, output, format) {
     }
   );
   writeFileSync(output, Buffer.from(process.stdout, "binary"));
+  if (process.status !== 0) throw new Error(process.stderr);
 }
 
 /**

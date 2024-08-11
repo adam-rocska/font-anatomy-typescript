@@ -1,44 +1,28 @@
-# 1.0.0
+# 1.1.0
 
-Initial release.
-Enjoy.
+A handful of features.
 
-## Features
+## Minor Changes
 
-### Get the anatomy of a font file
+* Added `fromFontBinary` to support font anatomy creation
+  directly from binary data.
+* Added a `FontAnatomyInstance` utility class to help with
+  font anatomy JSON stringification when it has a `Font`
+  instance associated with it. This was necessary to simplify
+  the JSON stringification process, because `OpenType.JS` has
+  a circular reference in its `Font` class, which causes
+  `JSON.stringify` to fail.
+* Added **wOF2** support.
+* Added an optional `font` field to the `FontAnatomy` type,
+  for the cases when it is known, it can be carried around
+  with the anatomy.
+* Exposed `ExpressibleAsNumber` to help with the
+  implementations of more complex use cases.
 
-```ts
-import { fromFontFile } from '@adam-rocska/font-anatomy';
+## Patch Changes
 
-// It takes a `PathLike` so you can pass a string, URL or a `Buffer`
-const fontAnatomy = fromFontFile('path/to/font.ttf');
-```
-
-### relativize
-
-Utility for when you need a font anatomy object who's values
-are relative to one of its properties.
-
-```ts
-import { relativize } from '@adam-rocska/font-anatomy';
-
-relativize('unitsPerEm', {
-  unitsPerEm: 1000,
-  ascender: 800,
-  descender: -200,
-  xHeight: 500,
-  capHeight: 700
-});
-```
-
-will yield
-
-```json
-{
-  unitsPerEm: 1,
-  ascender: 0.8,
-  descender: -0.2,
-  xHeight: 0.5,
-  capHeight: 0.7,
-}
-```
+* Occasionally to use `void` type instead of `undefined`
+  which messed around with TypeScript conventions. They
+  practically are the same (sadly) in this stack, but hey,
+  play along. Now they're all `undefined`.
+* Added some more keywords, dunno if it matters though.

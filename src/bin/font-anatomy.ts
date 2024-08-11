@@ -5,6 +5,7 @@ import {fromFont} from '../from-font';
 import {relativize} from '../relativize';
 import packageJson from '../../package.json';
 import {markdownTable} from "@adam-rocska/markdown-table";
+import {fromFontBinary} from '../from-font-binary';
 
 yargs(hideBin(process.argv))
   .version(packageJson.version)
@@ -21,9 +22,10 @@ yargs(hideBin(process.argv))
       );
 
     if (!input.length) throw new Error('No input received.');
-    const font = openType.parse(input.buffer);
-    const anatomy = fromFont(font);
+    const anatomy = await fromFontBinary(input);
     if (!anatomy) throw new Error('Could not extract anatomy.');
+    if (!anatomy.font) throw new Error('Could not extract font.');
+    const font = anatomy.font;
 
     if (argv.outputFormat === 'json') return process.stdout.write(JSON.stringify(anatomy));
     if (argv.headingLevel < 1 || argv.headingLevel > 5) throw new Error('Invalid heading level.');
