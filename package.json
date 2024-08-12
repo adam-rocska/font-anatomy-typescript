@@ -50,6 +50,7 @@
     "@arethetypeswrong/cli": "^0.15.4",
     "@swc/jest": "^0.2.36",
     "@types/jest": "^29.5.12",
+    "@types/node": "^22.2.0",
     "@types/opentype.js": "^1.3.8",
     "@types/wawoff2": "^1.0.2",
     "@types/yargs": "^17.0.33",
@@ -86,7 +87,6 @@
   },
   "dependencies": {
     "@adam-rocska/markdown-table": "^1.0.1",
-    "@types/node": "^22.2.0",
     "opentype.js": "^1.3.4",
     "wawoff2": "^2.0.1"
   },

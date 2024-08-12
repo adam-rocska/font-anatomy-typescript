@@ -5,3 +5,4 @@ A handful of features.
 ## Patch Changes
 
 * Removed the accidental `add` dependency.
+* Moved `@types/node` to devDependencies.
