@@ -37,9 +37,6 @@ devDependencies:
   '@types/yargs':
     specifier: ^17.0.33
     version: 17.0.33
-  add:
-    specifier: ^2.0.6
-    version: 2.0.6
   bunchee:
     specifier: ^5.3.1
     version: 5.3.1(typescript@5.5.4)
@@ -1369,10 +1366,6 @@ packages:
     resolution: {integrity: sha512-tcpGyI9zbizT9JbV6oYE477V6mTlXvvi0T0G3SNIYE2apm/G5huBa1+K89VGeovbg+jycCrfhl3ADxErOuO6Jg==}
     engines: {node: '>=0.4.0'}
     hasBin: true
-    dev: true
-
-  /add@2.0.6:
-    resolution: {integrity: sha512-j5QzrmsokwWWp6kUcJQySpbG+xfOBqqKnup3OIk1pz+kB/80SLorZ9V8zHFLO92Lcd+hbvq8bT+zOGoPkmBV0Q==}
     dev: true
 
   /ajv@6.12.6:
