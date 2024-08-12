@@ -1,6 +1,6 @@
-# 1.1.0
+# 1.1.1
 
-A handful of features.
+A match release addressing dependency related cleanups.
 
 ## Patch Changes
 
