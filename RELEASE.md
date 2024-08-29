@@ -1,8 +1,10 @@
-# 1.1.1
+# 1.1.2
 
-A match release addressing dependency related cleanups.
+Dependency upgrade and funding notice mainly.
 
 ## Patch Changes
 
-* Removed the accidental `add` dependency.
-* Moved `@types/node` to devDependencies.
+- `pnpm upgrade` for housekeeping.
+- Added funding notice to `package.json`.
+- Added `collectCoverage` to jest.
+- Fixed the module mapping for Jest.
