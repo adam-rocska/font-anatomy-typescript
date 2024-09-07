@@ -1,6 +1,6 @@
 {
   "name": "@adam-rocska/font-anatomy",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "description": "A collection of tools for working with font anatomy in Typescript.",
   "keywords": [
     "font",

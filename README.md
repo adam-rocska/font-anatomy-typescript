@@ -1,7 +1,14 @@
 # Font Anatomy Tools for Typescript
 
-[![npm version](https://img.shields.io/npm/v/@adam-rocska/font-anatomy)](https://www.npmjs.com/package/@adam-rocska/font-anatomy)
-[![License](https://img.shields.io/npm/l/@adam-rocska/font-anatomy)](https://github.com/adam-rocska/font-anatomy-typescript/blob/main/LICENSE)
+[![NPM Version](https://img.shields.io/npm/v/@adam-rocska/font-anatomy.svg)](https://www.npmjs.com/package/@adam-rocska/font-anatomy)
+[![License](https://img.shields.io/npm/l/@adam-rocska/font-anatomy)](https://github.com/adam-rocska/font-anatomy-typescript/blob/master/LICENSE)
+
+| Aspect               | Badge                                                                                                                                                         |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Minified             | [![Minified](https://badgen.net/bundlephobia/min/@adam-rocska/font-anatomy)](https://bundlephobia.com/package/@adam-rocska/font-anatomy)                      |
+| Minified + gzip      | [![Minified + gzip](https://badgen.net/bundlephobia/minzip/@adam-rocska/font-anatomy)](https://bundlephobia.com/package/@adam-rocska/font-anatomy)            |
+| Dependency Count     | [![Dependency Count](https://badgen.net/bundlephobia/dependency-count/@adam-rocska/font-anatomy)](https://bundlephobia.com/package/@adam-rocska/font-anatomy) |
+| Tree-shaking Support | [![Tree-shaking Support](https://badgen.net/bundlephobia/tree-shaking/@adam-rocska/font-anatomy)](https://bundlephobia.com/package/@adam-rocska/font-anatomy) |
 
 This is a collection of tools for working with font anatomy
 in Typescript.

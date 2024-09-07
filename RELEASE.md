@@ -1,10 +1,5 @@
-# 1.1.2
-
-Dependency upgrade and funding notice mainly.
+# 1.1.3
 
 ## Patch Changes
 
-- `pnpm upgrade` for housekeeping.
-- Added funding notice to `package.json`.
-- Added `collectCoverage` to jest.
-- Fixed the module mapping for Jest.
+- Added useful badges to the README file.
