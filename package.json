@@ -53,7 +53,7 @@
     "check": "pnpm eslint && pnpm attw --pack"
   },
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.15.4",
+    "@arethetypeswrong/cli": "^0.16.1",
     "@swc/jest": "^0.2.36",
     "@types/jest": "^29.5.12",
     "@types/node": "^22.5.4",
