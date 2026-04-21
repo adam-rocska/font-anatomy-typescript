@@ -1,32 +1,24 @@
 {
   "name": "@adam-rocska/font-anatomy",
   "version": "1.1.3",
-  "description": "A collection of tools for working with font anatomy in TypeScript.",
+  "description": "Extract font anatomy metrics from TTF, OTF, and WOFF2 in TypeScript and from the command line.",
   "keywords": [
     "font",
-    "anatomy",
+    "font-anatomy",
+    "font-metrics",
+    "vertical-metrics",
+    "x-height",
+    "cap-height",
+    "ascender",
+    "descender",
     "opentype",
+    "ttf",
+    "otf",
+    "woff2",
     "typography",
     "typeface",
-    "fontface",
-    "font-family",
     "typescript",
-    "ts",
-    "types",
-    "js",
-    "javascript",
-    "node",
-    "nodejs",
-    "font-metrics",
-    "font-tools",
-    "font-processing",
-    "font-format",
-    "font-rendering",
-    "font-utils",
-    "typography-tools",
-    "type-design",
-    "font-management",
-    "font-analysis"
+    "font-cli"
   ],
   "author": {
     "name": "Ádám László Rocska",
@@ -40,6 +32,7 @@
     "type": "git",
     "url": "https://github.com/adam-rocska/font-anatomy-typescript.git"
   },
+  "homepage": "https://github.com/adam-rocska/font-anatomy-typescript#readme",
   "bugs": {
     "url": "https://github.com/adam-rocska/font-anatomy-typescript/issues"
   },
