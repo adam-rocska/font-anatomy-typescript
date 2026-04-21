@@ -10,9 +10,3 @@
 - Modernized CI and release automation with a separate everyday CI workflow, a Node `20`/`22`/`24` verification matrix, and trusted-publishing-ready npm release configuration.
 - Refreshed the README and examples to match the real async API, current pnpm usage, supported formats, and actual CLI output shape.
 - Improved package metadata for discoverability by tightening the npm description, keywords, homepage, and related release housekeeping.
-
-# 1.1.3
-
-## Patch Changes
-
-- Added useful badges to the README file.
