@@ -1,4 +1,4 @@
-# Font Anatomy Tools for Typescript
+# Font Anatomy Tools for TypeScript
 
 [![NPM Version](https://img.shields.io/npm/v/@adam-rocska/font-anatomy.svg)](https://www.npmjs.com/package/@adam-rocska/font-anatomy)
 [![License](https://img.shields.io/npm/l/@adam-rocska/font-anatomy)](https://github.com/adam-rocska/font-anatomy-typescript/blob/master/LICENSE)
@@ -11,7 +11,11 @@
 | Tree-shaking Support | [![Tree-shaking Support](https://badgen.net/bundlephobia/tree-shaking/@adam-rocska/font-anatomy)](https://bundlephobia.com/package/@adam-rocska/font-anatomy) |
 
 This is a collection of tools for working with font anatomy
-in Typescript.
+in TypeScript.
+
+## Requirements
+
+- Node.js 20 or newer
 
 ## Installation
 
@@ -31,49 +35,47 @@ All utilities do and will assume inputs from `stdin` and
 outputs to `stdout`. This is to allow for easy chaining
 of commands and general composition.
 
-Example with `pnpx`:
+Example with `pnpm dlx`:
 
 ```zsh
-cat Poppins-BoldItalic.ttf | pnpx @adam-rocska/font-anatomy -o md > Poppins-BoldItalic.md
+pnpm dlx @adam-rocska/font-anatomy -o md < Poppins-BoldItalic.ttf > Poppins-BoldItalic.md
 ```
 
 Example with a global install:
 
 ```sh
-my-font.ttf | font-anatomy --output-format=md > font-anatomy.md
+cat my-font.ttf | font-anatomy --output-format=md > font-anatomy.md
 ```
 
-### Library units
+### Library API
 
 ```ts
 import { fromFontFile } from '@adam-rocska/font-anatomy';
 import { relativize } from '@adam-rocska/font-anatomy';
 
-// It takes a `PathLike` so you can pass a string, URL or a `Buffer`
-const fontAnatomy = fromFontFile('path/to/font.ttf');
-console.log(fontAnatomy);
-/// {
-///   unitsPerEm: 1000,
-///   ascender: 800,
-///   descender: -200,
-///   xHeight: 500,
-///   capHeight: 700
-/// }
+async function main() {
+  // It takes a `PathLike`, so you can pass a string or URL.
+  const fontAnatomy = await fromFontFile('path/to/font.ttf');
+  if (!fontAnatomy) throw new Error('Could not extract anatomy.');
 
-relativize('unitsPerEm', {
-  unitsPerEm: 1000,
-  ascender: 800,
-  descender: -200,
-  xHeight: 500,
-  capHeight: 700
-});
+  console.log(fontAnatomy);
+  // {
+  //   unitsPerEm: 1000,
+  //   ascender: 800,
+  //   descender: -200,
+  //   xHeight: 500,
+  //   capHeight: 700
+  // }
 
-/// {
-///   unitsPerEm: 1,
-///   ascender: 0.8,
-///   descender: -0.2,
-///   xHeight: 0.5,
-///   capHeight: 0.7,
-/// }
+  console.log(relativize('unitsPerEm', fontAnatomy));
+  // {
+  //   unitsPerEm: 1,
+  //   ascender: 0.8,
+  //   descender: -0.2,
+  //   xHeight: 0.5,
+  //   capHeight: 0.7,
+  // }
+}
 
+await main();
 ```

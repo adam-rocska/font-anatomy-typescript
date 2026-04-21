@@ -1,7 +1,7 @@
 {
   "name": "@adam-rocska/font-anatomy",
   "version": "1.1.3",
-  "description": "A collection of tools for working with font anatomy in Typescript.",
+  "description": "A collection of tools for working with font anatomy in TypeScript.",
   "keywords": [
     "font",
     "anatomy",
@@ -33,6 +33,9 @@
     "url": "https://adam-rocska.github.io"
   },
   "license": "MIT",
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/adam-rocska/font-anatomy-typescript.git"
@@ -57,18 +60,18 @@
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.2",
-    "@types/node": "^22.19.17",
+    "@types/node": "^24.12.2",
     "@types/opentype.js": "^1.3.9",
     "@types/wawoff2": "^1.0.2",
     "@types/yargs": "^17.0.35",
     "@typescript-eslint/parser": "^8.58.2",
     "@vitest/coverage-v8": "^4.1.5",
-    "bunchee": "^5.6.2",
+    "bunchee": "^6.10.0",
     "eslint": "^10.2.1",
     "pnpm": "^10.33.0",
     "rimraf": "^6.1.3",
     "type-fest": "^4.41.0",
-    "typescript": "^5.9.3",
+    "typescript": "^6.0.3",
     "vitest": "^4.1.5",
     "yargs": "^18.0.0"
   },
@@ -98,5 +101,5 @@
     "opentype.js": "^1.3.4",
     "wawoff2": "^2.0.1"
   },
-  "packageManager": "pnpm@9.4.0"
+  "packageManager": "pnpm@10.33.0"
 }
