@@ -91,11 +91,11 @@ async function ensureCliBuilt(): Promise<void> {
     if (lock !== null) {
       try {
         writeFileSync(buildLock, `${process.pid}`);
-        const process = spawnSync("pnpm", ["build"], {
+        const buildProcess = spawnSync("pnpm", ["build"], {
           cwd: projectRoot,
           stdio: "inherit",
         });
-        if (process.status !== 0) throw new Error("Could not build the CLI.");
+        if (buildProcess.status !== 0) throw new Error("Could not build the CLI.");
       } finally {
         closeSync(lock);
         rmSync(buildLock, { force: true });
