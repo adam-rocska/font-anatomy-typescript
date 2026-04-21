@@ -30,7 +30,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/adam-rocska/font-anatomy-typescript.git"
+    "url": "git+https://github.com/adam-rocska/font-anatomy-typescript.git"
   },
   "homepage": "https://github.com/adam-rocska/font-anatomy-typescript#readme",
   "bugs": {
@@ -88,7 +88,7 @@
     }
   },
   "bin": {
-    "font-anatomy": "./dist/bin/font-anatomy.js"
+    "font-anatomy": "dist/bin/font-anatomy.js"
   },
   "dependencies": {
     "@adam-rocska/markdown-table": "^1.0.2",
