@@ -1,6 +1,7 @@
-import {FontAnatomy} from '!src/font-anatomy';
-import {relativize} from '!src/relativize';
-import {ExpressibleAsNumber} from '!src/expressible-as-number';
+import {describe, expect, it} from "vitest";
+import {FontAnatomy} from "../../../src/font-anatomy";
+import {relativize} from "../../../src/relativize";
+import {ExpressibleAsNumber} from "../../../src/expressible-as-number";
 
 class Points implements ExpressibleAsNumber {
   private value: number;

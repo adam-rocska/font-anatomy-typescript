@@ -7,6 +7,7 @@
 
 /coverage
 /dist
+/.npm-cache
 
 .DS_Store
 *.pem
