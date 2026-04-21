@@ -30,18 +30,6 @@ const nodeGlobals = {
   clearTimeout: "readonly",
 };
 
-const jestGlobals = {
-  afterAll: "readonly",
-  afterEach: "readonly",
-  beforeAll: "readonly",
-  beforeEach: "readonly",
-  describe: "readonly",
-  expect: "readonly",
-  it: "readonly",
-  jest: "readonly",
-  test: "readonly",
-};
-
 export default [
   {
     ignores: ["coverage/**", "dist/**", "node_modules/**"],
@@ -57,16 +45,7 @@ export default [
     rules,
   },
   {
-    files: ["test/**/*.ts"],
-    languageOptions: {
-      globals: {
-        ...nodeGlobals,
-        ...jestGlobals,
-      },
-    },
-  },
-  {
-    files: ["bin/**/*.mjs", "eslint.config.mjs"],
+    files: ["bin/**/*.mjs", "eslint.config.mjs", "vitest.config.mts"],
     languageOptions: {
       ecmaVersion: "latest",
       sourceType: "module",

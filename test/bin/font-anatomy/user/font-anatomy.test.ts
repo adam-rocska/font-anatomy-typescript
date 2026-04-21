@@ -1,19 +1,34 @@
-import {execSync, spawnSync, StdioOptions} from "child_process";
+import {spawnSync} from "child_process";
 import {readdirSync, readFileSync} from "fs";
-import {resolve, sep} from "path";
+import {resolve} from "path";
+import {fileURLToPath} from "url";
+import {beforeAll, describe, expect, it} from "vitest";
 
 const replaceExtension = (name: string, ext: string) => name.split(".").slice(0, -1).join(".") + ext;
-const specimen = readdirSync(resolve(__dirname, "specimen"))
+const currentDirectory = fileURLToPath(new URL(".", import.meta.url));
+const projectRoot = resolve(currentDirectory, "../../../../");
+const cliEntrypoint = resolve(projectRoot, "dist/bin/font-anatomy.js");
+const specimen = readdirSync(resolve(currentDirectory, "specimen"))
   .map(name => ({
     name: name,
-    font: resolve(__dirname, "specimen", `${name}`, name),
-    json: resolve(__dirname, "specimen", `${name}`, replaceExtension(name, ".json")),
-    md: resolve(__dirname, "specimen", `${name}`, replaceExtension(name, ".md")),
+    font: resolve(currentDirectory, "specimen", `${name}`, name),
+    json: resolve(currentDirectory, "specimen", `${name}`, replaceExtension(name, ".json")),
+    md: resolve(currentDirectory, "specimen", `${name}`, replaceExtension(name, ".md")),
   }));
 
 describe("$ font-anatomy", () => {
+  beforeAll(() => {
+    const process = spawnSync("pnpm", ["build"], {
+      cwd: projectRoot,
+      stdio: "inherit",
+    });
+    if (process.status !== 0) throw new Error("Could not build the CLI.");
+  });
+
   it("should fail when no input is provided", () => {
-    expect(() => execSync('font-anatomy')).toThrow();
+    const process = runCli();
+    expect(process.status).not.toBe(0);
+    expect(process.stderr.toString()).toContain("No input received.");
   });
 
   describe.each(specimen)("when provided a valid input", specimen => {
@@ -38,7 +53,15 @@ describe("$ font-anatomy", () => {
 });
 
 function outputOf(input: Buffer, ...args: string[]): Buffer {
-  const stdio: StdioOptions = ['pipe', 'pipe', 'inherit'];
-  const process = spawnSync("font-anatomy", args, {input, stdio});
+  const process = runCli(input, ...args);
+  if (process.status !== 0) throw new Error(process.stderr.toString() || "The CLI exited with an error.");
   return process.stdout;
+}
+
+function runCli(input?: Buffer, ...args: string[]) {
+  return spawnSync(process.execPath, [cliEntrypoint, ...args], {
+    cwd: projectRoot,
+    input,
+    stdio: ['pipe', 'pipe', 'pipe'],
+  });
 }
