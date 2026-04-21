@@ -1,6 +1,6 @@
 {
   "name": "@adam-rocska/font-anatomy",
-  "version": "1.1.3",
+  "version": "1.1.4",
   "description": "Extract font anatomy metrics from TTF, OTF, and WOFF2 in TypeScript and from the command line.",
   "keywords": [
     "font",
