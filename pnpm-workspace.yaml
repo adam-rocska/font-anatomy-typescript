@@ -1,2 +1,4 @@
 allowBuilds:
   '@swc/core': true
+overrides:
+  '@arethetypeswrong/core@0.18.2>fflate': 0.8.2
