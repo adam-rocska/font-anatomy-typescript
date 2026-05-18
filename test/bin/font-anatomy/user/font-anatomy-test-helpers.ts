@@ -11,6 +11,9 @@ const currentDirectory = fileURLToPath(new URL(".", import.meta.url));
 const projectRoot = resolve(currentDirectory, "../../../../");
 const cliEntrypoint = resolve(projectRoot, "dist/bin/font-anatomy.js");
 const buildLock = resolve(projectRoot, ".vitest", "font-anatomy-build.lock");
+const buildLockGraceMs = 5_000;
+const buildWaitTimeoutMs = 60_000;
+const cliTimeoutMs = 8_000;
 const buildInputs = [
   resolve(projectRoot, "package.json"),
   resolve(projectRoot, "tsconfig.json"),
@@ -19,7 +22,7 @@ const buildInputs = [
 
 const replaceExtension = (name: string, ext: string) => name.split(".").slice(0, -1).join(".") + ext;
 const specimen = readdirSync(resolve(currentDirectory, "specimen"))
-  .sort((left, right) => left.localeCompare(right))
+  .sort(compareByCodePoint)
   .map(name => ({
     name: name,
     font: resolve(currentDirectory, "specimen", `${name}`, name),
@@ -43,7 +46,7 @@ export function registerFontAnatomyShardTests(shardIndex: number): void {
       });
     }
 
-    describe.each(shardSpecimen)("when provided a valid input", specimen => {
+    describe.each(shardSpecimen)("$name", specimen => {
       it("should yield a json by default.", () => {
         const actual = outputOf(readFileSync(specimen.font));
         const expected = readFileSync(specimen.json);
@@ -67,6 +70,7 @@ export function registerFontAnatomyShardTests(shardIndex: number): void {
 
 function outputOf(input: Buffer, ...args: string[]): Buffer {
   const process = runCli(input, ...args);
+  if (process.error) throw process.error;
   if (process.status !== 0) throw new Error(process.stderr.toString() || "The CLI exited with an error.");
   return process.stdout;
 }
@@ -76,6 +80,7 @@ function runCli(input?: Buffer, ...args: string[]) {
     cwd: projectRoot,
     input,
     stdio: ["pipe", "pipe", "pipe"],
+    timeout: cliTimeoutMs,
   });
 }
 
@@ -84,8 +89,12 @@ async function ensureCliBuilt(): Promise<void> {
 
   await mkdir(dirname(buildLock), { recursive: true });
 
+  const startedAt = Date.now();
   while (true) {
     if (isBuildFresh()) return;
+    if (Date.now() - startedAt > buildWaitTimeoutMs) {
+      throw new Error(`Timed out waiting for ${buildLock}.`);
+    }
 
     const lock = tryAcquireBuildLock();
     if (lock !== null) {
@@ -94,7 +103,9 @@ async function ensureCliBuilt(): Promise<void> {
         const buildProcess = spawnSync("pnpm", ["build"], {
           cwd: projectRoot,
           stdio: "inherit",
+          timeout: buildWaitTimeoutMs,
         });
+        if (buildProcess.error) throw buildProcess.error;
         if (buildProcess.status !== 0) throw new Error("Could not build the CLI.");
       } finally {
         closeSync(lock);
@@ -123,7 +134,10 @@ function clearStaleBuildLock(): void {
   if (!existsSync(buildLock)) return;
 
   const owner = Number.parseInt(readFileSync(buildLock, "utf8"), 10);
-  if (Number.isNaN(owner)) return;
+  if (Number.isNaN(owner)) {
+    if (Date.now() - statSync(buildLock).mtimeMs > buildLockGraceMs) rmSync(buildLock, { force: true });
+    return;
+  }
   if (isRunning(owner)) return;
 
   rmSync(buildLock, { force: true });
@@ -160,4 +174,10 @@ function collectFiles(directory: string): string[] {
     if (entry.isDirectory()) return collectFiles(path);
     return [path];
   });
+}
+
+function compareByCodePoint(left: string, right: string): number {
+  if (left < right) return -1;
+  if (left > right) return 1;
+  return 0;
 }

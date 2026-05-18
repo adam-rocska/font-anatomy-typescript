@@ -1,11 +1,11 @@
 import yargs from 'yargs';
 import {hideBin} from 'yargs/helpers';
-import openType, {Font, LocalizedName} from 'opentype.js';
 import {fromFont} from '../from-font';
 import {relativize} from '../relativize';
 import packageJson from '../../package.json';
 import {markdownTable} from "@adam-rocska/markdown-table";
 import {fromFontBinary} from '../from-font-binary';
+import {resolveFontName} from './resolve-font-name';
 
 yargs(hideBin(process.argv))
   .version(packageJson.version)
@@ -33,7 +33,7 @@ yargs(hideBin(process.argv))
     const relativized = relativize("unitsPerEm", anatomy);
 
     process.stdout.write([
-      head(argv.headingLevel, resolveLocalizedName(font.names.fullName)),
+      head(argv.headingLevel, resolveFontName(font.names, "fullName")),
       '',
       'Extracted using `font-anatomy`, a CLI utility of',
       '[`@adam-rocska/font-anatomy`](https://github.com/adam-rocska/font-anatomy)',
@@ -42,20 +42,20 @@ yargs(hideBin(process.argv))
       '',
       markdownTable(
         ["Attribute", "Value"],
-        ["Copyright", resolveLocalizedName(font.names.copyright)],
-        ["Description", resolveLocalizedName(font.names.description)],
-        ["Designer", resolveLocalizedName(font.names.designer)],
-        ["Designer URL", resolveLocalizedName(font.names.designerURL)],
-        ["Font Family", resolveLocalizedName(font.names.fontFamily)],
-        ["Font Subfamily", resolveLocalizedName(font.names.fontSubfamily)],
-        ["Full Name", resolveLocalizedName(font.names.fullName)],
-        ["License", resolveLocalizedName(font.names.license)],
-        ["License URL", resolveLocalizedName(font.names.licenseURL)],
-        ["Manufacturer", resolveLocalizedName(font.names.manufacturer)],
-        ["Manufacturer URL", resolveLocalizedName(font.names.manufacturerURL)],
-        ["postScript Name", resolveLocalizedName(font.names.postScriptName)],
-        ["Trademark", resolveLocalizedName(font.names.trademark)],
-        ["Version", resolveLocalizedName(font.names.version)],
+        ["Copyright", resolveFontName(font.names, "copyright")],
+        ["Description", resolveFontName(font.names, "description")],
+        ["Designer", resolveFontName(font.names, "designer")],
+        ["Designer URL", resolveFontName(font.names, "designerURL")],
+        ["Font Family", resolveFontName(font.names, "fontFamily")],
+        ["Font Subfamily", resolveFontName(font.names, "fontSubfamily")],
+        ["Full Name", resolveFontName(font.names, "fullName")],
+        ["License", resolveFontName(font.names, "license")],
+        ["License URL", resolveFontName(font.names, "licenseURL")],
+        ["Manufacturer", resolveFontName(font.names, "manufacturer")],
+        ["Manufacturer URL", resolveFontName(font.names, "manufacturerURL")],
+        ["postScript Name", resolveFontName(font.names, "postScriptName")],
+        ["Trademark", resolveFontName(font.names, "trademark")],
+        ["Version", resolveFontName(font.names, "version")],
       ),
       '',
       head(argv.headingLevel + 1, 'Anatomy'),
@@ -73,12 +73,3 @@ yargs(hideBin(process.argv))
   });
 
 function head(level: number, text: string): string {return `${'#'.repeat(level)} ${text}`;}
-
-function resolveLocalizedName(localizedName: LocalizedName): string {
-  if (!localizedName) return '';
-  const key = Object.keys(localizedName).find(k => /^en(\W|$)/.test(k));
-  const value = key
-    ? localizedName[key]
-    : Object.values(localizedName)[0];
-  return value ?? '';
-}
