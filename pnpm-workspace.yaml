@@ -1,4 +1,14 @@
 allowBuilds:
   '@swc/core': true
+minimumReleaseAgeExclude:
+  - '@vitest/coverage-v8@4.1.8'
+  - '@vitest/expect@4.1.8'
+  - '@vitest/mocker@4.1.8'
+  - '@vitest/pretty-format@4.1.8'
+  - '@vitest/runner@4.1.8'
+  - '@vitest/snapshot@4.1.8'
+  - '@vitest/spy@4.1.8'
+  - '@vitest/utils@4.1.8'
+  - vitest@4.1.8
 overrides:
   '@arethetypeswrong/core@0.18.2>fflate': 0.8.2
